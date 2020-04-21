@@ -11,4 +11,4 @@ You can optionally pass in an argument, which can be useful for testing. The arg
 **Example:**
 * Passing in a small subset of stock symbols so that you can avoid the rate limit on the API
 * `python3 BuildIndex.py data_small`
-*This would require a `data_small.css` file
+* This would require a `data_small.css` file
