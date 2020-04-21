@@ -1,14 +1,13 @@
 import requests, json, time, os, sys
 import alpha_vantage
 from datetime import date, datetime
+import datetime as dt
 
 def query_alpha_vantage(av_symbol, API_KEY):
 	""" This will query the Alpha Vantage api for the Global Quote feed of a specific
-	    stock symbol. This will return an HTTP request response
+    stock symbol. This will return an HTTP request response
 
-	    Official documentation here:
-
-	    https://www.alphavantage.co/documentation/
+    Official documentation here: https://www.alphavantage.co/documentation/
 	"""
 	while True:
 		url = "https://www.alphavantage.co/query"
@@ -38,7 +37,7 @@ def query_alpha_vantage(av_symbol, API_KEY):
 
 def parse_av_response(r):
 	""" This will parse through the request passed back from the Global Quote api endpoint.
-	    It will return a dictionary object
+	It will return a dictionary object
 	"""
 	if r is None:
 		return None
@@ -63,6 +62,9 @@ def parse_av_response(r):
 
 
 def query_yahoo_finance(symbol):
+	""" This function will scrape the yahoo finance page for the shares outstanding, which
+	will be used to calculate market cap
+	"""
 	url = 'https://finance.yahoo.com/quote/{}/key-statistics?p={}'.format(symbol, symbol)
 	r = requests.get(url)
 	content = str(r.content)
@@ -155,6 +157,33 @@ def generate_html(tickers_json, css_file):
 	return output
 
 
+def validate_time(now):
+
+	year, month, day = now.year, now.month, now.day
+	delta = dt.timedelta(days=0)
+
+	# Saturday, skip to Monday
+	if now.weekday() == 6:
+		delta = dt.timedelta(days=2)
+	# Sunday, skip to Monday
+	elif now.weekday() == 7:
+		delta = dt.timedelta(days=1)
+	elif now.hour > 16:
+		# Friday afternoon, skip to Monday
+		if now.weekday() == 5:
+			delta = dt.timedelta(days=3)
+		# All other weekday afternoons
+		else:
+			delta = dt.timedelta(days=1)
+	
+	future = now + delta
+	year, month, day = future.year, future.month, future.day
+	then = datetime(year=year, month=month, day=day, hour=9, minute=30)
+	time_diff = then - now
+	return max(time_diff.days * (24 * 60 * 60) + time_diff.seconds, 0)
+
+
+
 def main():
 	# File naming variables
 	filename_prefix = "data" if len(sys.argv) == 1 else sys.argv[1]
@@ -176,24 +205,37 @@ def main():
 	except Exception as e:
 		current_data = {}
 
-	# Query all stocks for relevant data
-	f = open(storage_file, "w+")
-	API_KEY = os.environ['AV_API_KEY']
-	for i in range(len(contents)):
-		symbol = contents[i]
-		data = parse_av_response(query_alpha_vantage(symbol, API_KEY))
-		if data is None:
-			continue
-		else:
-			current_data[symbol] = data
-			populate_market_cap(symbol, current_data[symbol])
-	f.write(json.dumps(current_data, indent=2))
-	f.close()
+	# Infinite loop for calculations. This will rest when rate limit is hit,
+	# or if it's not a valid trading time (markets are closed for weekend,
+	# afternoon, etc.)
+	while True:
 
-	# Generate the HTML file
-	f = open(html_file, 'w+')
-	f.write(generate_html(current_data, css_file))
-	f.close()
+		# Sleep until next trading day
+		sec_until_next_trading_day = validate_time(datetime.now())
+		print("Sleeping for {} second(s)".format(sec_until_next_trading_day))
+		time.sleep(sec_until_next_trading_day)
+
+		# Query all stocks for relevant data
+		f = open(storage_file, "w+")
+		API_KEY = os.environ['AV_API_KEY']
+		for i in range(len(contents)):
+			symbol = contents[i]
+			data = parse_av_response(query_alpha_vantage(symbol, API_KEY))
+			if data is None:
+				continue
+			else:
+				current_data[symbol] = data
+				populate_market_cap(symbol, current_data[symbol])
+		f.write(json.dumps(current_data, indent=2))
+		f.close()
+
+		# Generate the HTML file
+		f = open(html_file, 'w+')
+		f.write(generate_html(current_data, css_file))
+		f.close()
+
+		# Sleep for 30 minutes, then repeat
+		time.sleep(30 * 60)
 
 
 if __name__ == "__main__":
