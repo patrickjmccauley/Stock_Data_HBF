@@ -226,7 +226,8 @@ def main():
 			else:
 				current_data[symbol] = data
 				populate_market_cap(symbol, current_data[symbol])
-		f.write(json.dumps(current_data, indent=2))
+		if len(current_data) != 0:
+			f.write(json.dumps(current_data, indent=2))
 		f.close()
 
 		# Generate the HTML file
