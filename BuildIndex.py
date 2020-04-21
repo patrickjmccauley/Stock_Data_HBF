@@ -2,13 +2,18 @@ import requests, json, time, os, sys
 import alpha_vantage
 from datetime import date, datetime
 
-def query_alpha_vantage(av_function, av_symbol, API_KEY):
-	"""
+def query_alpha_vantage(av_symbol, API_KEY):
+	""" This will query the Alpha Vantage api for the Global Quote feed of a specific
+	    stock symbol. This will return an HTTP request response
+
+	    Official documentation here:
+
+	    https://www.alphavantage.co/documentation/
 	"""
 	while True:
 		url = "https://www.alphavantage.co/query"
 		data = {
-			"function": av_function,
+			"function": "GLOBAL_QUOTE",
 			"symbol": av_symbol,
 			"apikey": API_KEY
 		}
@@ -32,7 +37,8 @@ def query_alpha_vantage(av_function, av_symbol, API_KEY):
 
 
 def parse_av_response(r):
-	"""
+	""" This will parse through the request passed back from the Global Quote api endpoint.
+	    It will return a dictionary object
 	"""
 	if r is None:
 		return None
@@ -84,6 +90,8 @@ def query_yahoo_finance(symbol):
 
 
 def populate_market_cap(symbol, contents):
+	""" Simple helper to calculate the market cap and shares outstanding
+	"""
 	try:
 		contents["shares_outstanding"] = query_yahoo_finance(symbol)
 		contents["market_cap"] = contents["price"] * contents["shares_outstanding"]
@@ -173,7 +181,7 @@ def main():
 	API_KEY = os.environ['AV_API_KEY']
 	for i in range(len(contents)):
 		symbol = contents[i]
-		data = parse_av_response(query_alpha_vantage("GLOBAL_QUOTE", symbol, API_KEY))
+		data = parse_av_response(query_alpha_vantage(symbol, API_KEY))
 		if data is None:
 			continue
 		else:
