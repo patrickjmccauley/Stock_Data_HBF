@@ -1,7 +1,10 @@
 import requests, json, time, os, sys
 import alpha_vantage
-from datetime import date, datetime
+from datetime import date, datetime, timezone, timedelta
 import datetime as dt
+
+
+DEBUG_MODE = False
 
 def query_alpha_vantage(av_symbol, API_KEY):
 	""" This will query the Alpha Vantage api for the Global Quote feed of a specific
@@ -9,6 +12,7 @@ def query_alpha_vantage(av_symbol, API_KEY):
 
     Official documentation here: https://www.alphavantage.co/documentation/
 	"""
+	log("Querying for {}".format(av_symbol))
 	while True:
 		url = "https://www.alphavantage.co/query"
 		data = {
@@ -17,6 +21,7 @@ def query_alpha_vantage(av_symbol, API_KEY):
 			"apikey": API_KEY
 		}
 		r = requests.get(url, params=data)
+		log("Response: {}: {}".format(r.status_code, r.reason))
 		if r.status_code == 200:
 			if 'Global Quote' in json.loads(r.content).keys():
 				print('{}\t{}: {}'.format(av_symbol, r.status_code, r.reason))
@@ -28,10 +33,11 @@ def query_alpha_vantage(av_symbol, API_KEY):
 					return None
 				else:
 					print("{}\t{}: Hit rate limit. Sleeping for 60 seconds".format(av_symbol, r.status_code, r.reason))
+					log("Waiting 60 seconds due to rate limit")
 					time.sleep(60)
 					continue
 		else:
-			print('Error parsing {}\t{}: {}'.format(av_symbol, r.status_code, r.reason))
+			log('Error parsing {}\t{}: {}'.format(av_symbol, r.status_code, r.reason))
 			return None
 
 
@@ -58,6 +64,7 @@ def parse_av_response(r):
 		output["change_from_open_percent"] = output["change_from_open"] / output["open"]
 		return output
 	except Exception as e:
+		log("Error trying to parse alpha vantage response: {}".format(r), e)
 		return None
 
 
@@ -98,6 +105,7 @@ def populate_market_cap(symbol, contents):
 		contents["shares_outstanding"] = query_yahoo_finance(symbol)
 		contents["market_cap"] = contents["price"] * contents["shares_outstanding"]
 	except Exception as e:
+		log("Error trying to populate market cap for {}".format(symbol), e)
 		contents["shares_outstanding"] = 0
 		contents["market_cap"] = 0
 
@@ -105,6 +113,7 @@ def populate_market_cap(symbol, contents):
 def generate_html(tickers_json, css_file):
 	""" This function will populate the HTML file for display
 	"""
+	log("Generating HTML")
 	down_facing_triangle = "&#x25bc"
 	up_facing_triangle = "&#x25b2"
 	side_facing_triangle = "&#x25BA"
@@ -153,7 +162,7 @@ def generate_html(tickers_json, css_file):
 				</body>
 			</html>
 		"""
-
+	log("HTML created")
 	return output
 
 
@@ -183,10 +192,26 @@ def validate_time(now):
 	return max(time_diff.days * (24 * 60 * 60) + time_diff.seconds, 0)
 
 
+def log(msg, err=None):
+	""" Log locally to a file with message and optional error inclusion 
+	"""
+ 	
+	now = datetime.now
+	tz = timezone(-timedelta(hours=4))
+	time = now(tz=tz).strftime("%Y-%m-%d %H:%M:%S %Z")
+
+	to_write = '{} > {}\n'.format(time, msg)
+	if DEBUG_MODE:
+		print(to_write)
+	f = open('./log.txt', 'a+')
+	f.write(to_write)
+	f.close()
+
 
 def main():
 	# File naming variables
 	filename_prefix = "data" if len(sys.argv) == 1 else sys.argv[1]
+	log("Beginning run using '{}' prefix".format(filename_prefix))
 	storage_file = "{}.json".format(filename_prefix)
 	css_file = "{}.css".format(filename_prefix)
 	html_file = "{}.html".format(filename_prefix)
@@ -203,6 +228,7 @@ def main():
 		current_data = json.loads(f.read())
 		f.close
 	except Exception as e:
+		log("Error trying to read in the current data.", e)
 		current_data = {}
 
 	# Infinite loop for calculations. This will rest when rate limit is hit,
