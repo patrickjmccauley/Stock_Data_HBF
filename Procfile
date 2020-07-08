@@ -1,1 +1,1 @@
-stockdata: AV_API_KEY=33P61G3H4NCLJRTZ FTP_HOST=pabiotechbc.org FTP_USER=pabiotec FTP_PASS=ePv5Sg929x python3 BuildIndex.py
+stockdata: python BuildIndex.py
