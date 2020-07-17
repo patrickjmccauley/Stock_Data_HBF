@@ -218,9 +218,9 @@ def main():
 	while True:
 
 		# Sleep until next trading day
-		# sec_until_next_trading_day = validate_time(datetime.now())
-		# print("Sleeping for {} second(s)".format(sec_until_next_trading_day))
-		# time.sleep(sec_until_next_trading_day)
+		sec_until_next_trading_day = validate_time(datetime.now())
+		print("Sleeping for {} second(s)".format(sec_until_next_trading_day))
+		time.sleep(sec_until_next_trading_day)
 
 		# Read in the stock symbols from the provided csv
 		f = open(input_file, "r")
