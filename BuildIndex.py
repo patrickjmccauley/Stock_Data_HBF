@@ -1,4 +1,4 @@
-import requests, json, time, os, sys
+import requests, json, time, os, sys, ftplib
 import alpha_vantage
 from datetime import date, datetime, timezone, timedelta
 import datetime as dt
@@ -119,17 +119,8 @@ def generate_html(tickers_json, css_file):
 	side_facing_triangle = "&#x25BA"
 
 	output = """
-		<!DOCTYPE html>
-			<html>
-				<head>
-				<style>
-
-				</style>
-					<link rel="stylesheet" type="text/css" href="{}">
-				</head>
-				<body>
-					<div class="ticker-wrap">
-					<div class="ticker">""".format(css_file)
+		<div class="ticker-wrap">
+			<div class="ticker">""".format(css_file)
 
 	# Add the individual stocks
 	for symbol in tickers_json:
@@ -147,20 +138,18 @@ def generate_html(tickers_json, css_file):
 		else:
 			# No change
 			direction = side_facing_triangle
-			change_color = "#1d4891"
+			change_color = "gray"
 
 		this_ticker = """
-			<font color="#1d4891" style="font-family:arial"><b>{}</b></font>&nbsp;&nbsp;\n\t\t\
-			<font color="#1d4891" style="font-family:arial-narrow"> ${:.2f}&nbsp;&nbsp;\n\t\t\
-			<font color={}>{:.3%}&nbsp;\n\t\t\
-			<font color={}>{}\n\t\t
+			<span class="tickerSymbol">{}</span>&nbsp;&nbsp;\n\t\t\
+			<span class="tickerValue"> ${:.2f}</span>&nbsp;&nbsp;\n\t\t\
+			<span class="tickerPercent {}">{:.3%}</span>&nbsp;\n\t\t\
+			<span class="tickerDirection {}">{}</span>\n\t\t
 			""".format(symbol, price, change_color, change_from_open_percent, change_color, direction)
 		output += "<div class=\"ticker__item\">{}</div>".format(this_ticker)
 
 	output += """	</div>
-					</div>
-				</body>
-			</html>
+				</div>
 		"""
 	log("HTML created")
 	return output
@@ -207,6 +196,12 @@ def log(msg, err=None):
 	f.write(to_write)
 	f.close()
 
+def upload():
+	session = ftplib.FTP(os.environ['FTP_HOST'], os.environ['FTP_USER'], os.environ['FTP_PASS'])
+	file = open('data.html','rb')
+	session.storbinary('STOR public_html/dwd-ticker/data.html', file)
+	file.close()
+	session.quit()
 
 def main():
 	# File naming variables
@@ -217,20 +212,6 @@ def main():
 	html_file = "{}.html".format(filename_prefix)
 	input_file = "{}.csv".format(filename_prefix)
 
-	# Read in the stock symbols from the provided csv
-	f = open(input_file, "r")
-	contents = f.read().split(",")
-	f.close()
-
-	# Create the dictionary to contain the stock information
-	try:
-		f = open(storage_file, "r")
-		current_data = json.loads(f.read())
-		f.close
-	except Exception as e:
-		log("Error trying to read in the current data.", e)
-		current_data = {}
-
 	# Infinite loop for calculations. This will rest when rate limit is hit,
 	# or if it's not a valid trading time (markets are closed for weekend,
 	# afternoon, etc.)
@@ -240,6 +221,20 @@ def main():
 		sec_until_next_trading_day = validate_time(datetime.now())
 		print("Sleeping for {} second(s)".format(sec_until_next_trading_day))
 		time.sleep(sec_until_next_trading_day)
+
+		# Read in the stock symbols from the provided csv
+		f = open(input_file, "r")
+		contents = f.read().split(",")
+		f.close()
+
+		# Create the dictionary to contain the stock information
+		try:
+			f = open(storage_file, "r")
+			current_data = json.loads(f.read())
+			f.close
+		except Exception as e:
+			log("Error trying to read in the current data.", e)
+			current_data = {}
 
 		# Query all stocks for relevant data
 		f = open(storage_file, "w+")
@@ -261,9 +256,10 @@ def main():
 		f.write(generate_html(current_data, css_file))
 		f.close()
 
-		# Sleep for 30 minutes, then repeat
-		time.sleep(30 * 60)
+		upload()
 
+		# Sleep for 15 minutes, then repeat
+		time.sleep(15 * 60)
 
 if __name__ == "__main__":
 	main()

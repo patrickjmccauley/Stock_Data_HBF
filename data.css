@@ -58,6 +58,7 @@ body {
   animation-timing-function: linear;
   animation-name: ticker;
   animation-duration: 60s;
+  font-family: "arial-narrow arial sans-serif";
 }
 
 .ticker__item {
@@ -65,6 +66,26 @@ body {
 	padding: 0 2rem;
 	font-size: 2rem;
 	color: white;   
+}
+
+.tickerSymbol {
+  color: #06f;
+}
+
+.tickerValue {
+  color: #1d4891;
+}
+
+.red {
+  color: #F00;
+}
+
+.green {
+  color: #3A0;
+}
+
+.gray {
+  color: #999;
 }
 
 body { 

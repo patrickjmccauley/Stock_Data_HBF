@@ -1,0 +1,1 @@
+stockdata: python BuildIndex.py
