@@ -10,6 +10,7 @@ EXISTING_TICKERS = {
     "ARWR": "ARWR - Arrowhead Pharmaceuticals, Inc.",
     "ABUS": "ABUS - Arbutus Biopharma Corporation",
     "ASMB": "ASMB - Assembly Biosciences, Inc.",
+    "BBI": "BBI - Brickell Biotech, Inc.",
     "DRNA": "DRNA - Dicerna Pharmaceuticals, Inc.",
     "DVAX": "DVAX - Dynavax Technologies Corporation",
     "ENTA": "ENTA - Enanta Pharmaceuticals, Inc.",
@@ -25,12 +26,19 @@ def build_index_data(symbol):
     """
     log("About to start scraping for {}".format(symbol))
     try:
+        if DEBUG_MODE: log("About to scrape yahoo for change")
         change_amt, change_pct = scrape_yahoo_change(symbol)
         log("[{}] Retrieved change amount: {}\tchange percent: {}".format(symbol, change_amt, change_pct))
+
+        if DEBUG_MODE: log("About to scrape yahoo for price")
         price = scrape_yahoo_price(symbol)
         log("[{}] Retrieved price: {}".format(symbol, price))
+
+        if DEBUG_MODE: log("About to scrape yahoo for mkt_cap")
         market_cap = scrape_yahoo_mkt_cap(symbol)
         log("[{}] Retrieved mkt cap: {}".format(symbol, market_cap))
+
+        if DEBUG_MODE: log("About to scrape yahoo for name")
         name = scrape_yahoo_name(symbol)
         log("[{}] Retrieved name: {}".format(symbol, name))
         output = {
@@ -44,7 +52,7 @@ def build_index_data(symbol):
         return output
     except Exception as e:
         print(e)
-        log("Error trying to scrape data for: {}".format(symbol), traceback.format_exc())
+        log("Error trying to scrape data for: {}".format(symbol), e)
         return None
 
 
@@ -64,17 +72,13 @@ def scrape_yahoo_change(symbol):
     """
     url = "https://finance.yahoo.com/quote/{}?p={}".format(symbol, symbol)
     r = requests.get(url)
-    change_pct = str(r.content)
+    content = str(r.content)
 
-    change_pct = search_and_discard('quote-header-info', change_pct)
-    change_pct = search_and_discard('quote-market-notice', change_pct,
-                                       keep_all_before=True)
-    change_pct = search_and_discard('data-reactid="14">', change_pct,
-                                       additional_spaces=len('data-reactid="14">'))
-    change_pct = search_and_discard('span class=', change_pct)
-    change_pct = search_and_discard('>', change_pct, additional_spaces=1)
-    change_pct = search_and_discard('<', change_pct, keep_all_before=True)
-    split_str = change_pct.split(' ')
+    content = search_and_discard('quote-header-info', content)
+    content = search_and_discard('data-reactid="51"', content, additional_spaces=len('data-reactid="51"') + 1)
+    content = search_and_discard('<', content, keep_all_before=True)
+
+    split_str = content.split(' ')
     split_str[1] = split_str[1].replace('(', '')
     split_str[1] = split_str[1].replace(')', '')
     return float(split_str[0]), float(split_str[1][:-1]) / 100
@@ -85,16 +89,12 @@ def scrape_yahoo_price(symbol):
     """
     url = "https://finance.yahoo.com/quote/{}?p={}".format(symbol, symbol)
     r = requests.get(url)
-    price_content = str(r.content)
+    content = str(r.content)
 
-    price_content = search_and_discard('quote-header-info', price_content)
-    price_content = search_and_discard('quote-market-notice', price_content,
-                                       keep_all_before=True)
-    price_content = search_and_discard('data-reactid="14">', price_content,
-                                       additional_spaces=len('data-reactid="14">'))
-    price_content = search_and_discard('<', price_content, keep_all_before=True)
-    print("Found price: {}".format(price_content))
-    return float(price_content)
+    content = search_and_discard('quote-header-info', content)
+    content = search_and_discard('data-reactid="50"', content, additional_spaces=len('data-reactid="50"')+1)
+    content = search_and_discard('<', content, keep_all_before=True)
+    return float(content)
 
 
 def scrape_yahoo_mkt_cap(symbol):
@@ -102,7 +102,7 @@ def scrape_yahoo_mkt_cap(symbol):
     """
     url = "https://finance.yahoo.com/quote/{}?p={}".format(symbol, symbol)
     r = requests.get(url)
-    mkt_cap_content = str(r.content)
+    content = str(r.content)
 
     multipliers = {
         'T': 1000000000000,
@@ -110,13 +110,14 @@ def scrape_yahoo_mkt_cap(symbol):
         'M': 1000000,
         'K': 1000,
     }
-    mkt_cap_content = search_and_discard('MARKET_CAP-value', mkt_cap_content)
-    mkt_cap_content = search_and_discard('data-reactid="109"', mkt_cap_content,
-                                         additional_spaces=len('data-reactid="109"'))
-    mkt_cap_content = search_and_discard('>', mkt_cap_content, additional_spaces=1)
-    mkt_cap_content = search_and_discard('<', mkt_cap_content, keep_all_before=True)
-    mkt_cap = float(mkt_cap_content.strip()[:-1])
-    mkt_cap_multiplier = mkt_cap_content.strip()[-1]
+
+    to_find = '<div id="Main" role="content"'
+
+    content = search_and_discard(to_find, content)
+    content = search_and_discard('data-reactid="139"', content, additional_spaces=len('data-reactid="139"')+1)
+    content = search_and_discard('<', content, keep_all_before=True)
+    mkt_cap = float(content.strip()[:-1])
+    mkt_cap_multiplier = content.strip()[-1]
     return mkt_cap * multipliers[mkt_cap_multiplier]
 
 
@@ -130,11 +131,11 @@ def scrape_yahoo_name(symbol):
         r = requests.get(url)
         content = str(r.content)
 
-        name_content = search_and_discard('quote-header-info', content)
-        name_content = search_and_discard('<h1', name_content)
-        name_content = search_and_discard('>', name_content, additional_spaces=1)
-        name_content = search_and_discard('<', name_content, keep_all_before=True).strip()
-        name = name_content
+        content = search_and_discard('quote-header-info', content)
+        content = search_and_discard('<h1', content)
+        content = search_and_discard('>', content, additional_spaces=1)
+        content = search_and_discard('<', content, keep_all_before=True).strip()
+        name = content
     else:
         name = EXISTING_TICKERS[symbol]
     return name
@@ -252,6 +253,7 @@ def log(msg, err=None):
 
     to_write = '{} > {}\n'.format(time, msg)
     if err is not None:
+        to_write += '{}\n'.format(err)
         to_write += '{}\n'.format(traceback.print_exc())
     if DEBUG_MODE:
         print(to_write)
