@@ -2,6 +2,7 @@ import requests, json, time, os, sys, ftplib
 from datetime import date, datetime, timezone, timedelta
 import datetime as dt
 import traceback
+import SendMail
 
 DEBUG_MODE = False
 EXISTING_TICKERS = {
@@ -26,20 +27,23 @@ def build_index_data(symbol):
     """
     log("About to start scraping for {}".format(symbol))
     try:
+        if DEBUG_MODE: log("Retrieving HTML content for {}".format(symbol))
+        content = get_html_content(symbol)
+
         if DEBUG_MODE: log("About to scrape yahoo for change")
-        change_amt, change_pct = scrape_yahoo_change(symbol)
+        change_amt, change_pct = scrape_yahoo_change(content)
         log("[{}] Retrieved change amount: {}\tchange percent: {}".format(symbol, change_amt, change_pct))
 
         if DEBUG_MODE: log("About to scrape yahoo for price")
-        price = scrape_yahoo_price(symbol)
+        price = scrape_yahoo_price(content)
         log("[{}] Retrieved price: {}".format(symbol, price))
 
         if DEBUG_MODE: log("About to scrape yahoo for mkt_cap")
-        market_cap = scrape_yahoo_mkt_cap(symbol)
+        market_cap = scrape_yahoo_mkt_cap(content)
         log("[{}] Retrieved mkt cap: {}".format(symbol, market_cap))
 
         if DEBUG_MODE: log("About to scrape yahoo for name")
-        name = scrape_yahoo_name(symbol)
+        name = scrape_yahoo_name(symbol, content)
         log("[{}] Retrieved name: {}".format(symbol, name))
         output = {
             "price": price,
@@ -66,14 +70,10 @@ def search_and_discard(str_to_find, str_to_search, keep_all_before=False, additi
     return str_to_search[i + additional_spaces:]
 
 
-def scrape_yahoo_change(symbol):
+def scrape_yahoo_change(content):
     """ This function will scrape the Yahoo finance page and return a tuple of
     (change amount, change percentage)
     """
-    url = "https://finance.yahoo.com/quote/{}?p={}".format(symbol, symbol)
-    r = requests.get(url)
-    content = str(r.content)
-
     content = search_and_discard('quote-header-info', content)
     content = search_and_discard('data-reactid="51"', content, additional_spaces=len('data-reactid="51"') + 1)
     content = search_and_discard('<', content, keep_all_before=True)
@@ -84,12 +84,9 @@ def scrape_yahoo_change(symbol):
     return float(split_str[0]), float(split_str[1][:-1]) / 100
 
 
-def scrape_yahoo_price(symbol):
+def scrape_yahoo_price(content):
     """ This function will scrape the yahoo finance page for the price
     """
-    url = "https://finance.yahoo.com/quote/{}?p={}".format(symbol, symbol)
-    r = requests.get(url)
-    content = str(r.content)
 
     content = search_and_discard('quote-header-info', content)
     content = search_and_discard('data-reactid="50"', content, additional_spaces=len('data-reactid="50"')+1)
@@ -97,12 +94,9 @@ def scrape_yahoo_price(symbol):
     return float(content)
 
 
-def scrape_yahoo_mkt_cap(symbol):
+def scrape_yahoo_mkt_cap(content):
     """ This function will scrape the yahoo finance page for the market cap of the company
     """
-    url = "https://finance.yahoo.com/quote/{}?p={}".format(symbol, symbol)
-    r = requests.get(url)
-    content = str(r.content)
 
     multipliers = {
         'T': 1000000000000,
@@ -122,15 +116,11 @@ def scrape_yahoo_mkt_cap(symbol):
 
 
 
-def scrape_yahoo_name(symbol):
+def scrape_yahoo_name(symbol, content):
     """ This function will scrape the yahoo finance page for the name of the company
     """
     name = symbol
     if name not in EXISTING_TICKERS.keys():
-        url = 'https://finance.yahoo.com/quote/{}/key-statistics?p={}'.format(symbol, symbol)
-        r = requests.get(url)
-        content = str(r.content)
-
         content = search_and_discard('quote-header-info', content)
         content = search_and_discard('<h1', content)
         content = search_and_discard('>', content, additional_spaces=1)
@@ -243,6 +233,12 @@ def validate_time(now):
     time_diff = then - now
     return max(time_diff.days * (24 * 60 * 60) + time_diff.seconds, 0)
 
+def get_html_content(symbol):
+    url = 'https://finance.yahoo.com/quote/{}/key-statistics?p={}'.format(symbol, symbol)
+    r = requests.get(url)
+    content = str(r.content)
+    return content
+
 
 def log(msg, err=None):
     """ Log locally to a file with message and optional error inclusion
@@ -255,6 +251,7 @@ def log(msg, err=None):
     if err is not None:
         to_write += '{}\n'.format(err)
         to_write += '{}\n'.format(traceback.print_exc())
+        SendMail.send_mail("HBF Stock Data Script Failure", to_write)
     if DEBUG_MODE:
         print(to_write)
     f = open('./log.txt', 'a+')
@@ -331,7 +328,8 @@ def main():
         f.write(generate_html(current_data, css_file))
         f.close()
 
-        upload()
+        ##### Uncomment for Heroku #####
+        # upload()
 
         # Sleep for 20 minutes, then repeat
         time.sleep(20 * 60)
