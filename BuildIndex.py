@@ -21,43 +21,81 @@ EXISTING_TICKERS = {
     "VIR": "VIR - Vir Biotechnology, Inc.",
 }
 
-def build_index_data(symbol):
+def build_index_data(symbol, current_data):
     """ This will parse through the request passed back from the Global Quote api endpoint.
     It will return a dictionary object, also leveraging Yahoo Finance web scraping
     """
     log("About to start scraping for {}".format(symbol))
+    change_amt, change_pct, price, name, market_cap = None, None, None, symbol, None
+
+    # Retrieve the HTML content to be used througout
     try:
-        if DEBUG_MODE: log("Retrieving HTML content for {}".format(symbol))
+        action = "HTML content"
+        if DEBUG_MODE: log("Retrieving {} for {}".format(action, symbol))
         content = get_html_content(symbol)
-
-        if DEBUG_MODE: log("About to scrape yahoo for change")
-        change_amt, change_pct = scrape_yahoo_change(content)
-        log("[{}] Retrieved change amount: {}\tchange percent: {}".format(symbol, change_amt, change_pct))
-
-        if DEBUG_MODE: log("About to scrape yahoo for price")
-        price = scrape_yahoo_price(content)
-        log("[{}] Retrieved price: {}".format(symbol, price))
-
-        if DEBUG_MODE: log("About to scrape yahoo for mkt_cap")
-        market_cap = scrape_yahoo_mkt_cap(content)
-        log("[{}] Retrieved mkt cap: {}".format(symbol, market_cap))
-
-        if DEBUG_MODE: log("About to scrape yahoo for name")
-        name = scrape_yahoo_name(symbol, content)
-        log("[{}] Retrieved name: {}".format(symbol, name))
-        output = {
-            "price": price,
-            "refresh_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "market_cap": market_cap,
-            "name": name,
-            "change_from_open": change_amt,
-            "change_from_open_percent": change_pct
-        }
-        return output
     except Exception as e:
         print(e)
-        log("Error trying to scrape data for: {}".format(symbol), e)
-        return None
+        log("Error retrieving {} data for: {}".format(action, symbol), e)
+
+    # Retrieve the change in percentage, value
+    try:
+        action = "change amounts"
+        if DEBUG_MODE: log("Retrieving {} for {}".format(action, symbol))
+        change_amt, change_pct = scrape_yahoo_change(content)
+        log("[{}] Retrieved change amount: {}\tchange percent: {}".format(symbol, change_amt, change_pct))
+    except Exception as e:
+        print(e)
+        log("Error retrieving {} data for: {}".format(action, symbol), e)
+
+    # Retrieve the Price amount
+    try:
+        action = "price"
+        if DEBUG_MODE: log("Retrieving {} for {}".format(action, symbol))
+        price = scrape_yahoo_price(content)
+        log("[{}] Retrieved price: {}".format(symbol, price))
+    except Exception as e:
+        print(e)
+        log("Error retrieving {} data for: {}".format(action, symbol), e)
+
+    # Retrieve market cap
+    try:
+        action = "market cap"
+        if DEBUG_MODE: log("Retrieving {} for {}".format(action, symbol))
+        market_cap = scrape_yahoo_mkt_cap(content)
+        log("[{}] Retrieved mkt cap: {}".format(symbol, market_cap))
+    except Exception as e:
+        print(e)
+        log("Error retrieving {} data for: {}".format(action, symbol), e)
+
+    # Retrieve the name
+    try:
+        action = "name"
+        if DEBUG_MODE: log("Retrieving {} for {}".format(action, symbol))
+        name = scrape_yahoo_name(symbol, content)
+        log("[{}] Retrieved name: {}".format(symbol, name))
+    except Exception as e:
+        print(e)
+        log("Error retrieving {} data for: {}".format(action, symbol), e)
+
+    # Build the new dictionary using the data we just retrieved
+    new_data = {
+        "price": price,
+        "refresh_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "market_cap": market_cap,
+        "name": name,
+        "change_from_open": change_amt,
+        "change_from_open_percent": change_pct
+    }
+
+    # Check our new dictionary. If we have any blanks, use the old dictionary if that's
+    # not blank
+    for key in new_data.keys():
+        if key not in current_data:
+            continue
+        elif new_data[key] is None and current_data[key] is not None:
+            new_data[key] = current_data[key]
+
+    return new_data
 
 
 def search_and_discard(str_to_find, str_to_search, keep_all_before=False, additional_spaces=0):
@@ -106,9 +144,10 @@ def scrape_yahoo_mkt_cap(content):
     }
 
     to_find = '<div id="Main" role="content"'
-
     content = search_and_discard(to_find, content)
-    content = search_and_discard('data-reactid="139"', content, additional_spaces=len('data-reactid="139"')+1)
+    content = search_and_discard('Market Cap', content)
+    content = search_and_discard('<span', content)
+    content = search_and_discard('>', content, additional_spaces=1)
     content = search_and_discard('<', content, keep_all_before=True)
     mkt_cap = float(content.strip()[:-1])
     mkt_cap_multiplier = content.strip()[-1]
@@ -234,7 +273,7 @@ def validate_time(now):
     return max(time_diff.days * (24 * 60 * 60) + time_diff.seconds, 0)
 
 def get_html_content(symbol):
-    url = 'https://finance.yahoo.com/quote/{}/key-statistics?p={}'.format(symbol, symbol)
+    url = 'https://finance.yahoo.com/quote/{}'.format(symbol)
     r = requests.get(url)
     content = str(r.content)
     return content
@@ -309,7 +348,9 @@ def main():
             if symbol == index_symbol:
                 current_data[symbol] = {}
                 continue
-            data = build_index_data(symbol)
+            elif symbol not in current_data.keys():
+                current_data[symbol] = {}
+            data = build_index_data(symbol, current_data[symbol])
             if data is None:
                 continue
             else:
