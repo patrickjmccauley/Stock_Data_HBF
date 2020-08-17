@@ -2,7 +2,6 @@ import requests, json, time, os, sys, ftplib
 from datetime import date, datetime, timezone, timedelta
 import datetime as dt
 import traceback
-import SendMail
 
 DEBUG_MODE = False
 EXISTING_TICKERS = {
@@ -290,7 +289,6 @@ def log(msg, err=None):
     if err is not None:
         to_write += '{}\n'.format(err)
         to_write += '{}\n'.format(traceback.print_exc())
-        SendMail.send_mail("HBF Stock Data Script Failure", to_write)
     if DEBUG_MODE:
         print(to_write)
     f = open('./log.txt', 'a+')
@@ -370,7 +368,7 @@ def main():
         f.close()
 
         ##### Uncomment for Heroku #####
-        # upload()
+        upload()
 
         # Sleep for 20 minutes, then repeat
         time.sleep(20 * 60)
