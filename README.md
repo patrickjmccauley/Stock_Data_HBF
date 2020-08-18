@@ -1,14 +1,21 @@
-# Simple script to populate a scrolling stock ticker of pre-defined companies relevant to Hepatitis B research
+# HBRI Stock Ticker
+A simple script to generate a scrolling stock ticker displaying the price fluctuations of companies engaged in Hepatitis-B Virus-related research. The companies are aggregated to generate a market-value-weighted index, the Hepatitis B Research Index (HBRI).
 
-### To run
+## Installation
+The script can be run locally or on a Heroku server. To run locally, comment out the `upload()` call near the bottom of `main()`. This function is required for Heroku deployment, but meaningless in a local environment.
 
-The script can run constantly in the background using `python3 BuildIndex.py &` (command may vary on system). It will generate an HTML file but can be modified to return a div element to be embedded.
+## Usage
+```shell script
+python3 BuildIndex.py         # Runs the script with default data.csv as input
 
-### Optional arguments
+python3 BuildIndex.py arg1    # Runs the script with optional argument containing 
+                              # file prefix. All generated files will adhere to this 
+                              # naming convention (arg1.csv, arg1.html, arg1.css).
+```
+After building the ticker, it will need to be injected into the page in which it is being embedded. That is not addressed here, this simply generates the HTML for use elsewhere.
 
-You can optionally pass in an argument, which can be useful for testing. The argument will change the output files such that they all start with that argument. Note that a new CSS file will need to be provided adhering to this naming convention.
+## Example Output in Use
+![embedded_ticker](https://github.com/pmccau/Stock_Data_HBF/blob/master/assets/embedded_ticker.png)
 
-**Example:**
-* Passing in a small subset of stock symbols so that you can avoid the rate limit on the API
-* `python3 BuildIndex.py data_small`
-* This would require a `data_small.css` file
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
