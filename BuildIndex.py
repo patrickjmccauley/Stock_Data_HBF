@@ -20,40 +20,81 @@ EXISTING_TICKERS = {
     "VIR": "VIR - Vir Biotechnology, Inc.",
 }
 
-def build_index_data(symbol):
+def build_index_data(symbol, current_data):
     """ This will parse through the request passed back from the Global Quote api endpoint.
     It will return a dictionary object, also leveraging Yahoo Finance web scraping
     """
     log("About to start scraping for {}".format(symbol))
+    change_amt, change_pct, price, name, market_cap = None, None, None, symbol, None
+
+    # Retrieve the HTML content to be used througout
     try:
-        if DEBUG_MODE: log("About to scrape yahoo for change")
-        change_amt, change_pct = scrape_yahoo_change(symbol)
-        log("[{}] Retrieved change amount: {}\tchange percent: {}".format(symbol, change_amt, change_pct))
-
-        if DEBUG_MODE: log("About to scrape yahoo for price")
-        price = scrape_yahoo_price(symbol)
-        log("[{}] Retrieved price: {}".format(symbol, price))
-
-        if DEBUG_MODE: log("About to scrape yahoo for mkt_cap")
-        market_cap = scrape_yahoo_mkt_cap(symbol)
-        log("[{}] Retrieved mkt cap: {}".format(symbol, market_cap))
-
-        if DEBUG_MODE: log("About to scrape yahoo for name")
-        name = scrape_yahoo_name(symbol)
-        log("[{}] Retrieved name: {}".format(symbol, name))
-        output = {
-            "price": price,
-            "refresh_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "market_cap": market_cap,
-            "name": name,
-            "change_from_open": change_amt,
-            "change_from_open_percent": change_pct
-        }
-        return output
+        action = "HTML content"
+        if DEBUG_MODE: log("Retrieving {} for {}".format(action, symbol))
+        content = get_html_content(symbol)
     except Exception as e:
         print(e)
-        log("Error trying to scrape data for: {}".format(symbol), e)
-        return None
+        log("Error retrieving {} data for: {}".format(action, symbol), e)
+
+    # Retrieve the change in percentage, value
+    try:
+        action = "change amounts"
+        if DEBUG_MODE: log("Retrieving {} for {}".format(action, symbol))
+        change_amt, change_pct = scrape_yahoo_change(content)
+        log("[{}] Retrieved change amount: {}\tchange percent: {}".format(symbol, change_amt, change_pct))
+    except Exception as e:
+        print(e)
+        log("Error retrieving {} data for: {}".format(action, symbol), e)
+
+    # Retrieve the Price amount
+    try:
+        action = "price"
+        if DEBUG_MODE: log("Retrieving {} for {}".format(action, symbol))
+        price = scrape_yahoo_price(content)
+        log("[{}] Retrieved price: {}".format(symbol, price))
+    except Exception as e:
+        print(e)
+        log("Error retrieving {} data for: {}".format(action, symbol), e)
+
+    # Retrieve market cap
+    try:
+        action = "market cap"
+        if DEBUG_MODE: log("Retrieving {} for {}".format(action, symbol))
+        market_cap = scrape_yahoo_mkt_cap(content)
+        log("[{}] Retrieved mkt cap: {}".format(symbol, market_cap))
+    except Exception as e:
+        print(e)
+        log("Error retrieving {} data for: {}".format(action, symbol), e)
+
+    # Retrieve the name
+    try:
+        action = "name"
+        if DEBUG_MODE: log("Retrieving {} for {}".format(action, symbol))
+        name = scrape_yahoo_name(symbol, content)
+        log("[{}] Retrieved name: {}".format(symbol, name))
+    except Exception as e:
+        print(e)
+        log("Error retrieving {} data for: {}".format(action, symbol), e)
+
+    # Build the new dictionary using the data we just retrieved
+    new_data = {
+        "price": price,
+        "refresh_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "market_cap": market_cap,
+        "name": name,
+        "change_from_open": change_amt,
+        "change_from_open_percent": change_pct
+    }
+
+    # Check our new dictionary. If we have any blanks, use the old dictionary if that's
+    # not blank
+    for key in new_data.keys():
+        if key not in current_data:
+            continue
+        elif new_data[key] is None and current_data[key] is not None:
+            new_data[key] = current_data[key]
+
+    return new_data
 
 
 def search_and_discard(str_to_find, str_to_search, keep_all_before=False, additional_spaces=0):
@@ -66,14 +107,10 @@ def search_and_discard(str_to_find, str_to_search, keep_all_before=False, additi
     return str_to_search[i + additional_spaces:]
 
 
-def scrape_yahoo_change(symbol):
+def scrape_yahoo_change(content):
     """ This function will scrape the Yahoo finance page and return a tuple of
     (change amount, change percentage)
     """
-    url = "https://finance.yahoo.com/quote/{}?p={}".format(symbol, symbol)
-    r = requests.get(url)
-    content = str(r.content)
-
     content = search_and_discard('quote-header-info', content)
     content = search_and_discard('data-reactid="51"', content, additional_spaces=len('data-reactid="51"') + 1)
     content = search_and_discard('<', content, keep_all_before=True)
@@ -84,12 +121,9 @@ def scrape_yahoo_change(symbol):
     return float(split_str[0]), float(split_str[1][:-1]) / 100
 
 
-def scrape_yahoo_price(symbol):
+def scrape_yahoo_price(content):
     """ This function will scrape the yahoo finance page for the price
     """
-    url = "https://finance.yahoo.com/quote/{}?p={}".format(symbol, symbol)
-    r = requests.get(url)
-    content = str(r.content)
 
     content = search_and_discard('quote-header-info', content)
     content = search_and_discard('data-reactid="50"', content, additional_spaces=len('data-reactid="50"')+1)
@@ -97,12 +131,9 @@ def scrape_yahoo_price(symbol):
     return float(content)
 
 
-def scrape_yahoo_mkt_cap(symbol):
+def scrape_yahoo_mkt_cap(content):
     """ This function will scrape the yahoo finance page for the market cap of the company
     """
-    url = "https://finance.yahoo.com/quote/{}?p={}".format(symbol, symbol)
-    r = requests.get(url)
-    content = str(r.content)
 
     multipliers = {
         'T': 1000000000000,
@@ -112,9 +143,10 @@ def scrape_yahoo_mkt_cap(symbol):
     }
 
     to_find = '<div id="Main" role="content"'
-
     content = search_and_discard(to_find, content)
-    content = search_and_discard('data-reactid="139"', content, additional_spaces=len('data-reactid="139"')+1)
+    content = search_and_discard('Market Cap', content)
+    content = search_and_discard('<span', content)
+    content = search_and_discard('>', content, additional_spaces=1)
     content = search_and_discard('<', content, keep_all_before=True)
     mkt_cap = float(content.strip()[:-1])
     mkt_cap_multiplier = content.strip()[-1]
@@ -122,15 +154,11 @@ def scrape_yahoo_mkt_cap(symbol):
 
 
 
-def scrape_yahoo_name(symbol):
+def scrape_yahoo_name(symbol, content):
     """ This function will scrape the yahoo finance page for the name of the company
     """
     name = symbol
     if name not in EXISTING_TICKERS.keys():
-        url = 'https://finance.yahoo.com/quote/{}/key-statistics?p={}'.format(symbol, symbol)
-        r = requests.get(url)
-        content = str(r.content)
-
         content = search_and_discard('quote-header-info', content)
         content = search_and_discard('<h1', content)
         content = search_and_discard('>', content, additional_spaces=1)
@@ -243,6 +271,12 @@ def validate_time(now):
     time_diff = then - now
     return max(time_diff.days * (24 * 60 * 60) + time_diff.seconds, 0)
 
+def get_html_content(symbol):
+    url = 'https://finance.yahoo.com/quote/{}'.format(symbol)
+    r = requests.get(url)
+    content = str(r.content)
+    return content
+
 
 def log(msg, err=None):
     """ Log locally to a file with message and optional error inclusion
@@ -312,7 +346,9 @@ def main():
             if symbol == index_symbol:
                 current_data[symbol] = {}
                 continue
-            data = build_index_data(symbol)
+            elif symbol not in current_data.keys():
+                current_data[symbol] = {}
+            data = build_index_data(symbol, current_data[symbol])
             if data is None:
                 continue
             else:
@@ -331,6 +367,7 @@ def main():
         f.write(generate_html(current_data, css_file))
         f.close()
 
+        ##### Uncomment for Heroku #####
         upload()
 
         # Sleep for 20 minutes, then repeat
