@@ -3,7 +3,7 @@ from datetime import date, datetime, timezone, timedelta
 import datetime as dt
 import traceback
 
-DEBUG_MODE = False
+DEBUG_MODE = True
 EXISTING_TICKERS = {
     "HBRI": "HBRI - Hepatitis B Research Index",
     "ALT": "ALT - Altimmune, Inc.",
@@ -188,7 +188,9 @@ def generate_html(tickers_json, css_file):
         name = symbol_data['name']
         price, change_from_open_percent = symbol_data["price"], symbol_data["change_from_open_percent"]
 
-        if change_from_open_percent < 0:
+        if change_from_open_percent is None:
+            continue
+        elif change_from_open_percent < 0:
             # Negative change
             direction = down_facing_triangle
             change_color = "red"
@@ -226,6 +228,10 @@ def update_index_data(current_data, idx_symbol):
         if symbol != idx_symbol:
             cur_mkt_cap = current_data[symbol]['market_cap']
             change_pct = current_data[symbol]['change_from_open_percent']
+            print("SYM: {} | cur_mkt_cap: {} | change_pct: {}".format(symbol, cur_mkt_cap, change_pct))
+            if cur_mkt_cap is None or change_pct is None:
+                log("Skipping")
+                continue
             op_mkt_cap = cur_mkt_cap - (change_pct * cur_mkt_cap)
 
             open_mkt_cap += op_mkt_cap
@@ -368,7 +374,7 @@ def main():
         f.close()
 
         ##### Uncomment for Heroku #####
-        upload()
+        # upload()
 
         # Sleep for 20 minutes, then repeat
         time.sleep(20 * 60)
