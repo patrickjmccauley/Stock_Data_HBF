@@ -16,7 +16,7 @@ EXISTING_TICKERS = {
     "ENTA": "ENTA - Enanta Pharmaceuticals, Inc.",
     "HEPA": "HEPA - Hepion Pharmaceuticals, Inc.",
     "NTLA": "NTLA - Intellia Therapeutics, Inc.",
-    "SBPH": "SBPH - Spring Bank Pharmaceuticals, Inc.",
+    # "SBPH": "SBPH - Spring Bank Pharmaceuticals, Inc.",
     "VIR": "VIR - Vir Biotechnology, Inc.",
 }
 
