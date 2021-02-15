@@ -188,7 +188,9 @@ def generate_html(tickers_json, css_file):
         name = symbol_data['name']
         price, change_from_open_percent = symbol_data["price"], symbol_data["change_from_open_percent"]
 
-        if change_from_open_percent < 0:
+        if change_from_open_percent is None:
+            continue
+        elif change_from_open_percent < 0:
             # Negative change
             direction = down_facing_triangle
             change_color = "red"
@@ -226,6 +228,10 @@ def update_index_data(current_data, idx_symbol):
         if symbol != idx_symbol:
             cur_mkt_cap = current_data[symbol]['market_cap']
             change_pct = current_data[symbol]['change_from_open_percent']
+            print("SYM: {} | cur_mkt_cap: {} | change_pct: {}".format(symbol, cur_mkt_cap, change_pct))
+            if cur_mkt_cap is None or change_pct is None:
+                log("Skipping")
+                continue
             op_mkt_cap = cur_mkt_cap - (change_pct * cur_mkt_cap)
 
             open_mkt_cap += op_mkt_cap
@@ -304,8 +310,12 @@ def upload():
     session.quit()
 
 def main():
+    global DEBUG_MODE
+    if "debug" in sys.argv:
+        DEBUG_MODE = True
+
     # File naming variables
-    filename_prefix = "data" if len(sys.argv) == 1 else sys.argv[1]
+    filename_prefix = "data" if len(sys.argv) == 1 or 'debug' in sys.argv else sys.argv[1]
     log("Beginning run using '{}' prefix".format(filename_prefix))
     storage_file = "{}.json".format(filename_prefix)
     css_file = "{}.css".format(filename_prefix)
@@ -368,7 +378,8 @@ def main():
         f.close()
 
         ##### Uncomment for Heroku #####
-        upload()
+        if not DEBUG_MODE:
+            upload()
 
         # Sleep for 20 minutes, then repeat
         time.sleep(20 * 60)

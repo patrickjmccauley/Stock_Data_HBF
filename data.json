@@ -1,0 +1,106 @@
+{
+  "HBRI": {
+    "price": 936.2319,
+    "open": 28457338376.3,
+    "change_from_open": -370381376.29999924,
+    "change_from_open_percent": -0.013015320385987409,
+    "market_cap": 28086957000.0,
+    "name": "HBRI - Hepatitis B Research Index"
+  },
+  "ABUS": {
+    "price": 4.33,
+    "refresh_time": "2021-02-15 14:31:42",
+    "market_cap": 367657000.0,
+    "name": "ABUS - Arbutus Biopharma Corporation",
+    "change_from_open": -0.05,
+    "change_from_open_percent": -0.011399999999999999
+  },
+  "ALT": {
+    "price": 22.22,
+    "refresh_time": "2021-02-15 14:31:42",
+    "market_cap": 825315000.0,
+    "name": "ALT - Altimmune, Inc.",
+    "change_from_open": 0.14,
+    "change_from_open_percent": 0.0063
+  },
+  "ARWR": {
+    "price": 88.2,
+    "refresh_time": "2021-02-15 14:31:43",
+    "market_cap": 9154000000.0,
+    "name": "ARWR - Arrowhead Pharmaceuticals, Inc.",
+    "change_from_open": -0.14,
+    "change_from_open_percent": -0.0016
+  },
+  "ASMB": {
+    "price": 6.29,
+    "refresh_time": "2021-02-15 14:31:43",
+    "market_cap": 207710000.0,
+    "name": "ASMB - Assembly Biosciences, Inc.",
+    "change_from_open": -0.08,
+    "change_from_open_percent": -0.0126
+  },
+  "BBI": {
+    "price": 1.61,
+    "refresh_time": "2021-02-15 14:31:43",
+    "market_cap": 86160000.0,
+    "name": "BBI - Brickell Biotech, Inc.",
+    "change_from_open": -0.01,
+    "change_from_open_percent": -0.0062
+  },
+  "DRNA": {
+    "price": 26.01,
+    "refresh_time": "2021-02-15 14:31:44",
+    "market_cap": 1952000000.0,
+    "name": "DRNA - Dicerna Pharmaceuticals, Inc.",
+    "change_from_open": -0.18,
+    "change_from_open_percent": -0.0069
+  },
+  "DVAX": {
+    "price": 9.74,
+    "refresh_time": "2021-02-15 14:31:44",
+    "market_cap": 1073000000.0,
+    "name": "DVAX - Dynavax Technologies Corporation",
+    "change_from_open": 0.21,
+    "change_from_open_percent": 0.022000000000000002
+  },
+  "ENTA": {
+    "price": 51.32,
+    "refresh_time": "2021-02-15 14:31:45",
+    "market_cap": 1034999999.9999999,
+    "name": "ENTA - Enanta Pharmaceuticals, Inc.",
+    "change_from_open": -2.51,
+    "change_from_open_percent": -0.0466
+  },
+  "HEPA": {
+    "price": 2.97,
+    "refresh_time": "2021-02-15 14:31:45",
+    "market_cap": 95115000.0,
+    "name": "HEPA - Hepion Pharmaceuticals, Inc.",
+    "change_from_open": 0.13,
+    "change_from_open_percent": 0.0458
+  },
+  "NTLA": {
+    "price": 68.28,
+    "refresh_time": "2021-02-15 14:31:45",
+    "market_cap": 4411000000.0,
+    "name": "NTLA - Intellia Therapeutics, Inc.",
+    "change_from_open": -0.64,
+    "change_from_open_percent": -0.009300000000000001
+  },
+  "SBPH": {
+    "price": null,
+    "refresh_time": "2021-02-15 14:31:46",
+    "market_cap": null,
+    "name": "SBPH - Spring Bank Pharmaceuticals, Inc.",
+    "change_from_open": null,
+    "change_from_open_percent": null
+  },
+  "VIR": {
+    "price": 69.71,
+    "refresh_time": "2021-02-15 14:31:46",
+    "market_cap": 8880000000.0,
+    "name": "VIR - Vir Biotechnology, Inc.",
+    "change_from_open": -2.26,
+    "change_from_open_percent": -0.031400000000000004
+  }
+}
