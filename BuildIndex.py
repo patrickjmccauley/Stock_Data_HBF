@@ -3,7 +3,7 @@ from datetime import date, datetime, timezone, timedelta
 import datetime as dt
 import traceback
 
-DEBUG_MODE = True
+DEBUG_MODE = False
 EXISTING_TICKERS = {
     "HBRI": "HBRI - Hepatitis B Research Index",
     "ALT": "ALT - Altimmune, Inc.",
@@ -16,7 +16,7 @@ EXISTING_TICKERS = {
     "ENTA": "ENTA - Enanta Pharmaceuticals, Inc.",
     "HEPA": "HEPA - Hepion Pharmaceuticals, Inc.",
     "NTLA": "NTLA - Intellia Therapeutics, Inc.",
-    # "SBPH": "SBPH - Spring Bank Pharmaceuticals, Inc.",
+    "SBPH": "SBPH - Spring Bank Pharmaceuticals, Inc.",
     "VIR": "VIR - Vir Biotechnology, Inc.",
 }
 
@@ -310,8 +310,12 @@ def upload():
     session.quit()
 
 def main():
+    global DEBUG_MODE
+    if "debug" in sys.argv:
+        DEBUG_MODE = True
+
     # File naming variables
-    filename_prefix = "data" if len(sys.argv) == 1 else sys.argv[1]
+    filename_prefix = "data" if len(sys.argv) == 1 or 'debug' in sys.argv else sys.argv[1]
     log("Beginning run using '{}' prefix".format(filename_prefix))
     storage_file = "{}.json".format(filename_prefix)
     css_file = "{}.css".format(filename_prefix)
@@ -374,7 +378,8 @@ def main():
         f.close()
 
         ##### Uncomment for Heroku #####
-        # upload()
+        if not DEBUG_MODE:
+            upload()
 
         # Sleep for 20 minutes, then repeat
         time.sleep(20 * 60)
