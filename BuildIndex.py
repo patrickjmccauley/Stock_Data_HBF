@@ -110,7 +110,7 @@ def get_all_text_on_page(symbol):
     """ Retrieve all non-HTML content on page
     """
     req = requests.get(f"https://finance.yahoo.com/quote/{symbol}")
-    soup = BeautifulSoup(req.content)
+    soup = BeautifulSoup(req.content, features="html.parser")
     return soup.get_text().strip()
 
 
@@ -290,7 +290,7 @@ def log(msg, err=None):
     to_write = '{} > {}\n'.format(time, msg)
     if err is not None:
         to_write += '{}\n'.format(err)
-        to_write += '{}\n'.format(traceback.print_exc())
+        if DEBUG_MODE: to_write += '{}\n'.format(traceback.print_exc())
     if DEBUG_MODE:
         print(to_write)
     f = open('./log.txt', 'a+')
