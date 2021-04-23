@@ -1,7 +1,14 @@
-import requests, json, time, os, sys, ftplib
-from datetime import date, datetime, timezone, timedelta
+import requests
+import json
+import time
+import os
+import sys
+import ftplib
+from datetime import datetime, timezone, timedelta
 import datetime as dt
 import traceback
+import re
+from bs4 import BeautifulSoup
 
 DEBUG_MODE = False
 EXISTING_TICKERS = {
@@ -16,7 +23,6 @@ EXISTING_TICKERS = {
     "ENTA": "ENTA - Enanta Pharmaceuticals, Inc.",
     "HEPA": "HEPA - Hepion Pharmaceuticals, Inc.",
     "NTLA": "NTLA - Intellia Therapeutics, Inc.",
-    "SBPH": "SBPH - Spring Bank Pharmaceuticals, Inc.",
     "VIR": "VIR - Vir Biotechnology, Inc.",
 }
 
@@ -31,27 +37,20 @@ def build_index_data(symbol, current_data):
     try:
         action = "HTML content"
         if DEBUG_MODE: log("Retrieving {} for {}".format(action, symbol))
-        content = get_html_content(symbol)
+        content = get_all_text_on_page(symbol)
     except Exception as e:
         print(e)
         log("Error retrieving {} data for: {}".format(action, symbol), e)
 
-    # Retrieve the change in percentage, value
+    # Retrieve the change in percentage, value, and current price
     try:
         action = "change amounts"
         if DEBUG_MODE: log("Retrieving {} for {}".format(action, symbol))
-        change_amt, change_pct = scrape_yahoo_change(content)
+        price_data = scrape_price_and_change(content)
+        price = price_data[0]
+        change_amt = price_data[1]
+        change_pct = price_data[2] / 100
         log("[{}] Retrieved change amount: {}\tchange percent: {}".format(symbol, change_amt, change_pct))
-    except Exception as e:
-        print(e)
-        log("Error retrieving {} data for: {}".format(action, symbol), e)
-
-    # Retrieve the Price amount
-    try:
-        action = "price"
-        if DEBUG_MODE: log("Retrieving {} for {}".format(action, symbol))
-        price = scrape_yahoo_price(content)
-        log("[{}] Retrieved price: {}".format(symbol, price))
     except Exception as e:
         print(e)
         log("Error retrieving {} data for: {}".format(action, symbol), e)
@@ -107,28 +106,27 @@ def search_and_discard(str_to_find, str_to_search, keep_all_before=False, additi
     return str_to_search[i + additional_spaces:]
 
 
-def scrape_yahoo_change(content):
-    """ This function will scrape the Yahoo finance page and return a tuple of
-    (change amount, change percentage)
+def get_all_text_on_page(symbol):
+    """ Retrieve all non-HTML content on page
     """
-    content = search_and_discard('quote-header-info', content)
-    content = search_and_discard('data-reactid="51"', content, additional_spaces=len('data-reactid="51"') + 1)
-    content = search_and_discard('<', content, keep_all_before=True)
-
-    split_str = content.split(' ')
-    split_str[1] = split_str[1].replace('(', '')
-    split_str[1] = split_str[1].replace(')', '')
-    return float(split_str[0]), float(split_str[1][:-1]) / 100
+    req = requests.get(f"https://finance.yahoo.com/quote/{symbol}")
+    soup = BeautifulSoup(req.content, features="html.parser")
+    return soup.get_text().strip()
 
 
-def scrape_yahoo_price(content):
-    """ This function will scrape the yahoo finance page for the price
+def scrape_price_and_change(content):
+    """ Retrieve the price information and return a list of:
+        [ price, valueChange, valueChangePercent ]
     """
+    text = search_and_discard(')As of ', content, keep_all_before=True, additional_spaces=1)
+    text = search_and_discard('Visitors trend', text, additional_spaces=1)
+    data = re.findall('\d+\.\d{2,5}[-|+]\d+\.\d{2,5}\W+\d+\.\d{2,5}%\W{1}', text)
+    data = re.findall('\W{0,1}\d+\.\d+', data[0])
 
-    content = search_and_discard('quote-header-info', content)
-    content = search_and_discard('data-reactid="50"', content, additional_spaces=len('data-reactid="50"')+1)
-    content = search_and_discard('<', content, keep_all_before=True)
-    return float(content)
+    # Cast all data to float, then return
+    for i in range(len(data)):
+        data[i] = float(data[i])
+    return data
 
 
 def scrape_yahoo_mkt_cap(content):
@@ -142,14 +140,10 @@ def scrape_yahoo_mkt_cap(content):
         'K': 1000,
     }
 
-    to_find = '<div id="Main" role="content"'
-    content = search_and_discard(to_find, content)
-    content = search_and_discard('Market Cap', content)
-    content = search_and_discard('<span', content)
-    content = search_and_discard('>', content, additional_spaces=1)
-    content = search_and_discard('<', content, keep_all_before=True)
-    mkt_cap = float(content.strip()[:-1])
-    mkt_cap_multiplier = content.strip()[-1]
+    data = re.findall('Market Cap\d+\.*\d*[M|B|K]{1}', content)
+    data = re.findall('\d+\.*\d*[M|B|K]{1}', data[0])
+    mkt_cap = float(data[0].strip()[:-1])
+    mkt_cap_multiplier = data[0].strip()[-1]
     return mkt_cap * multipliers[mkt_cap_multiplier]
 
 
@@ -159,11 +153,7 @@ def scrape_yahoo_name(symbol, content):
     """
     name = symbol
     if name not in EXISTING_TICKERS.keys():
-        content = search_and_discard('quote-header-info', content)
-        content = search_and_discard('<h1', content)
-        content = search_and_discard('>', content, additional_spaces=1)
-        content = search_and_discard('<', content, keep_all_before=True).strip()
-        name = content
+        name = search_and_discard('Stock Price,', content, keep_all_before=True)
     else:
         name = EXISTING_TICKERS[symbol]
     return name
@@ -300,7 +290,7 @@ def log(msg, err=None):
     to_write = '{} > {}\n'.format(time, msg)
     if err is not None:
         to_write += '{}\n'.format(err)
-        to_write += '{}\n'.format(traceback.print_exc())
+        if DEBUG_MODE: to_write += '{}\n'.format(traceback.print_exc())
     if DEBUG_MODE:
         print(to_write)
     f = open('./log.txt', 'a+')
@@ -389,6 +379,7 @@ def main():
 
         # Sleep for 20 minutes, then repeat
         time.sleep(20 * 60)
+
 
 if __name__ == "__main__":
     main()
