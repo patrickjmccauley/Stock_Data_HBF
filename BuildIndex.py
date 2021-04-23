@@ -227,6 +227,12 @@ def update_index_data(current_data, idx_symbol):
             open_mkt_cap += op_mkt_cap
             current_mkt_cap += cur_mkt_cap
 
+    if current_mkt_cap == 0:
+        current_mkt_cap = 1;
+
+    if open_mkt_cap == 0:
+        open_mkt_cap = current_mkt_cap;
+
     current_data[idx_symbol] = {
         "price": current_mkt_cap / 30000000,
         "open": open_mkt_cap,
