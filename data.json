@@ -1,106 +1,106 @@
 {
   "HBRI": {
-    "price": 785.6161333333333,
-    "open": 23567664460.6,
-    "change_from_open": 819539.4000015259,
-    "change_from_open_percent": 3.477389120893236e-05,
-    "market_cap": 23568484000.0,
+    "price": 784.2729,
+    "open": 23566527863.5,
+    "change_from_open": -38340863.5,
+    "change_from_open_percent": -0.001626920338968669,
+    "market_cap": 23528187000.0,
     "name": "HBRI - Hepatitis B Research Index"
   },
   "ABUS": {
     "price": 3.2,
-    "refresh_time": "2021-04-23 11:52:27",
+    "refresh_time": "2021-04-23 11:57:06",
     "market_cap": 306622000.0,
     "name": "ABUS - Arbutus Biopharma Corporation",
     "change_from_open": 0.01,
     "change_from_open_percent": 0.0031
   },
   "ALT": {
-    "price": 12.57,
-    "refresh_time": "2021-04-23 11:52:28",
-    "market_cap": 457773000.0,
+    "price": 12.58,
+    "refresh_time": "2021-04-23 11:57:06",
+    "market_cap": 458137000.0,
     "name": "ALT - Altimmune, Inc.",
-    "change_from_open": -0.11,
-    "change_from_open_percent": -0.0087
+    "change_from_open": -0.1,
+    "change_from_open_percent": -0.0079
   },
   "ARWR": {
-    "price": 71.35,
-    "refresh_time": "2021-04-23 11:52:28",
-    "market_cap": 7201000000.0,
+    "price": 71.38,
+    "refresh_time": "2021-04-23 11:57:07",
+    "market_cap": 7204000000.0,
     "name": "ARWR - Arrowhead Pharmaceuticals, Inc.",
-    "change_from_open": 0.36,
-    "change_from_open_percent": 0.0051
+    "change_from_open": 0.39,
+    "change_from_open_percent": 0.0055000000000000005
   },
   "ASMB": {
-    "price": 4.31,
-    "refresh_time": "2021-04-23 11:52:29",
-    "market_cap": 172655000.0,
+    "price": 4.3,
+    "refresh_time": "2021-04-23 11:57:07",
+    "market_cap": 172254000.0,
     "name": "ASMB - Assembly Biosciences, Inc.",
-    "change_from_open": -0.06,
-    "change_from_open_percent": -0.0137
+    "change_from_open": -0.07,
+    "change_from_open_percent": -0.016
   },
   "BBI": {
-    "price": 0.9218,
-    "refresh_time": "2021-04-23 11:52:29",
-    "market_cap": 61696000.0,
+    "price": 0.9386,
+    "refresh_time": "2021-04-23 11:57:08",
+    "market_cap": 62820000.0,
     "name": "BBI - Brickell Biotech, Inc.",
-    "change_from_open": 0.0347,
-    "change_from_open_percent": 0.0391
+    "change_from_open": 0.0515,
+    "change_from_open_percent": 0.0581
   },
   "DRNA": {
-    "price": 28.81,
-    "refresh_time": "2021-04-23 11:52:30",
-    "market_cap": 2207000000.0,
+    "price": 28.77,
+    "refresh_time": "2021-04-23 11:57:08",
+    "market_cap": 2204000000.0,
     "name": "DRNA - Dicerna Pharmaceuticals, Inc.",
-    "change_from_open": -0.05,
-    "change_from_open_percent": -0.0017000000000000001
+    "change_from_open": -0.09,
+    "change_from_open_percent": -0.0031
   },
   "DVAX": {
     "price": 9.55,
-    "refresh_time": "2021-04-23 11:52:30",
+    "refresh_time": "2021-04-23 11:57:09",
     "market_cap": 1076000000.0,
     "name": "DVAX - Dynavax Technologies Corporation",
     "change_from_open": 0.01,
     "change_from_open_percent": 0.0005
   },
   "ENTA": {
-    "price": 51.06,
-    "refresh_time": "2021-04-23 11:52:31",
-    "market_cap": 1030000000.0,
+    "price": 51.12,
+    "refresh_time": "2021-04-23 11:57:09",
+    "market_cap": 1030999999.9999999,
     "name": "ENTA - Enanta Pharmaceuticals, Inc.",
-    "change_from_open": -1.33,
-    "change_from_open_percent": -0.0254
+    "change_from_open": -1.27,
+    "change_from_open_percent": -0.0242
   },
   "HEPA": {
-    "price": 1.705,
-    "refresh_time": "2021-04-23 11:52:31",
-    "market_cap": 130738000.0,
+    "price": 1.7,
+    "refresh_time": "2021-04-23 11:57:10",
+    "market_cap": 130354000.00000001,
     "name": "HEPA - Hepion Pharmaceuticals, Inc.",
-    "change_from_open": 0.025,
-    "change_from_open_percent": 0.0149
+    "change_from_open": 0.02,
+    "change_from_open_percent": 0.011899999999999999
   },
   "NTLA": {
-    "price": 76.8,
-    "refresh_time": "2021-04-23 11:52:31",
-    "market_cap": 4855000000.0,
+    "price": 76.54,
+    "refresh_time": "2021-04-23 11:57:10",
+    "market_cap": 4838000000.0,
     "name": "NTLA - Intellia Therapeutics, Inc.",
-    "change_from_open": 2.2,
-    "change_from_open_percent": 0.029500000000000002
+    "change_from_open": 1.94,
+    "change_from_open_percent": 0.026000000000000002
   },
   "SBPH": {
     "price": null,
-    "refresh_time": "2021-04-23 11:52:32",
+    "refresh_time": "2021-04-23 11:57:11",
     "market_cap": null,
-    "name": "Symbol Lookup from Yahoo FinanceHomeMailNewsFinanceSportsEntertainmentSearchMobileMore...Yahoo FinanceSearchSign inMailSign in to view your mailFinance HomeWatchlistsMy PortfolioScreenersYahoo Finance PlusMarketsNewsPersonal FinanceVideosIndustriesTechContact UsU.S. markets close in 4 hours 8 minutesS&P 5004,175.26+40.28(+0.97%)Dow 3033,980.23+164.33(+0.49%)Nasdaq14,007.35+188.94(+1.37%)Symbols similar to 'sbph'All (8)Stocks (8)Mutual Funds (0)ETFs (0)Indices (0)Futures (0)Currencies (0)SymbolNameLast PriceIndustry / CategoryTypeExchangeSPHSuburban Propane Partners, L.P.14.65UtilitiesStocksNYQSBHSally Beauty Holdings, Inc. (Na20.46Consumer CyclicalStocksNYQTBPHTheravance Biopharma, Inc.21.30HealthcareStocksNGMLBPHLongboard Pharmaceuticals, Inc.10.94HealthcareStocksNGMSCPHscPharmaceuticals Inc.6.83HealthcareStocksNMSSPPHSPENCER PHARMACEUTICAL INC0.00N/AStocksPNKKBPHKYTO TECHNOLOGY AND LIFE SCI IN1.90Financial ServicesStocksPNKSBPHSBPHN/AN/AStocksNCMAlready got your third stimulus check? A bonus amount may be on the wayMoneyWiseEconomist: Government will 'attempt' to make unearned and earned tax rate similarYahoo Finance VideoThe worst mistake you can make on a Zoom job interview: \u2018It\u2019s the first thing that occurs and it never goes well\u2019Yahoo FinanceAdvertise with us\u00a9 2021 Verizon Media. All rights reserved.Data DisclaimerHelpSuggestionsPrivacy DashboardPrivacy (Updated)About Our AdsTerms (Updated)Sitema",
+    "name": "Symbol Lookup from Yahoo FinanceHomeMailNewsFinanceSportsEntertainmentSearchMobileMore...Yahoo FinanceSearchSign inMailSign in to view your mailFinance HomeWatchlistsMy PortfolioScreenersYahoo Finance PlusMarketsNewsPersonal FinanceVideosIndustriesTechContact UsU.S. markets close in 4 hours 3 minutesS&P 5004,176.04+41.06(+0.99%)Dow 3033,993.56+177.66(+0.53%)Nasdaq14,004.17+185.75(+1.34%)Symbols similar to 'sbph'All (8)Stocks (8)Mutual Funds (0)ETFs (0)Indices (0)Futures (0)Currencies (0)SymbolNameLast PriceIndustry / CategoryTypeExchangeSPHSuburban Propane Partners, L.P.14.65UtilitiesStocksNYQSBHSally Beauty Holdings, Inc. (Na20.44Consumer CyclicalStocksNYQTBPHTheravance Biopharma, Inc.21.26HealthcareStocksNGMLBPHLongboard Pharmaceuticals, Inc.10.94HealthcareStocksNGMSCPHscPharmaceuticals Inc.6.79HealthcareStocksNMSSPPHSPENCER PHARMACEUTICAL INC0.00N/AStocksPNKKBPHKYTO TECHNOLOGY AND LIFE SCI IN1.90Financial ServicesStocksPNKSBPHSBPHN/AN/AStocksNCMAlready got your third stimulus check? A bonus amount may be on the wayMoneyWiseEconomist: Government will 'attempt' to make unearned and earned tax rate similarYahoo Finance VideoThe worst mistake you can make on a Zoom job interview: \u2018It\u2019s the first thing that occurs and it never goes well\u2019Yahoo FinanceAdvertise with us\u00a9 2021 Verizon Media. All rights reserved.Data DisclaimerHelpSuggestionsPrivacy DashboardPrivacy (Updated)About Our AdsTerms (Updated)Sitema",
     "change_from_open": null,
     "change_from_open_percent": null
   },
   "VIR": {
-    "price": 48.62,
-    "refresh_time": "2021-04-23 11:52:32",
-    "market_cap": 6070000000.0,
+    "price": 48.42,
+    "refresh_time": "2021-04-23 11:57:11",
+    "market_cap": 6045000000.0,
     "name": "VIR - Vir Biotechnology, Inc.",
-    "change_from_open": -1.22,
-    "change_from_open_percent": -0.0245
+    "change_from_open": -1.42,
+    "change_from_open_percent": -0.0285
   }
 }
