@@ -1,106 +1,106 @@
 {
   "HBRI": {
-    "price": 936.2319,
-    "open": 28457338376.3,
-    "change_from_open": -370381376.29999924,
-    "change_from_open_percent": -0.013015320385987409,
-    "market_cap": 28086957000.0,
+    "price": 785.6161333333333,
+    "open": 23567664460.6,
+    "change_from_open": 819539.4000015259,
+    "change_from_open_percent": 3.477389120893236e-05,
+    "market_cap": 23568484000.0,
     "name": "HBRI - Hepatitis B Research Index"
   },
   "ABUS": {
-    "price": 4.33,
-    "refresh_time": "2021-02-15 14:31:42",
-    "market_cap": 367657000.0,
+    "price": 3.2,
+    "refresh_time": "2021-04-23 11:52:27",
+    "market_cap": 306622000.0,
     "name": "ABUS - Arbutus Biopharma Corporation",
-    "change_from_open": -0.05,
-    "change_from_open_percent": -0.011399999999999999
+    "change_from_open": 0.01,
+    "change_from_open_percent": 0.0031
   },
   "ALT": {
-    "price": 22.22,
-    "refresh_time": "2021-02-15 14:31:42",
-    "market_cap": 825315000.0,
+    "price": 12.57,
+    "refresh_time": "2021-04-23 11:52:28",
+    "market_cap": 457773000.0,
     "name": "ALT - Altimmune, Inc.",
-    "change_from_open": 0.14,
-    "change_from_open_percent": 0.0063
+    "change_from_open": -0.11,
+    "change_from_open_percent": -0.0087
   },
   "ARWR": {
-    "price": 88.2,
-    "refresh_time": "2021-02-15 14:31:43",
-    "market_cap": 9154000000.0,
+    "price": 71.35,
+    "refresh_time": "2021-04-23 11:52:28",
+    "market_cap": 7201000000.0,
     "name": "ARWR - Arrowhead Pharmaceuticals, Inc.",
-    "change_from_open": -0.14,
-    "change_from_open_percent": -0.0016
+    "change_from_open": 0.36,
+    "change_from_open_percent": 0.0051
   },
   "ASMB": {
-    "price": 6.29,
-    "refresh_time": "2021-02-15 14:31:43",
-    "market_cap": 207710000.0,
+    "price": 4.31,
+    "refresh_time": "2021-04-23 11:52:29",
+    "market_cap": 172655000.0,
     "name": "ASMB - Assembly Biosciences, Inc.",
-    "change_from_open": -0.08,
-    "change_from_open_percent": -0.0126
+    "change_from_open": -0.06,
+    "change_from_open_percent": -0.0137
   },
   "BBI": {
-    "price": 1.61,
-    "refresh_time": "2021-02-15 14:31:43",
-    "market_cap": 86160000.0,
+    "price": 0.9218,
+    "refresh_time": "2021-04-23 11:52:29",
+    "market_cap": 61696000.0,
     "name": "BBI - Brickell Biotech, Inc.",
-    "change_from_open": -0.01,
-    "change_from_open_percent": -0.0062
+    "change_from_open": 0.0347,
+    "change_from_open_percent": 0.0391
   },
   "DRNA": {
-    "price": 26.01,
-    "refresh_time": "2021-02-15 14:31:44",
-    "market_cap": 1952000000.0,
+    "price": 28.81,
+    "refresh_time": "2021-04-23 11:52:30",
+    "market_cap": 2207000000.0,
     "name": "DRNA - Dicerna Pharmaceuticals, Inc.",
-    "change_from_open": -0.18,
-    "change_from_open_percent": -0.0069
+    "change_from_open": -0.05,
+    "change_from_open_percent": -0.0017000000000000001
   },
   "DVAX": {
-    "price": 9.74,
-    "refresh_time": "2021-02-15 14:31:44",
-    "market_cap": 1073000000.0,
+    "price": 9.55,
+    "refresh_time": "2021-04-23 11:52:30",
+    "market_cap": 1076000000.0,
     "name": "DVAX - Dynavax Technologies Corporation",
-    "change_from_open": 0.21,
-    "change_from_open_percent": 0.022000000000000002
+    "change_from_open": 0.01,
+    "change_from_open_percent": 0.0005
   },
   "ENTA": {
-    "price": 51.32,
-    "refresh_time": "2021-02-15 14:31:45",
-    "market_cap": 1034999999.9999999,
+    "price": 51.06,
+    "refresh_time": "2021-04-23 11:52:31",
+    "market_cap": 1030000000.0,
     "name": "ENTA - Enanta Pharmaceuticals, Inc.",
-    "change_from_open": -2.51,
-    "change_from_open_percent": -0.0466
+    "change_from_open": -1.33,
+    "change_from_open_percent": -0.0254
   },
   "HEPA": {
-    "price": 2.97,
-    "refresh_time": "2021-02-15 14:31:45",
-    "market_cap": 95115000.0,
+    "price": 1.705,
+    "refresh_time": "2021-04-23 11:52:31",
+    "market_cap": 130738000.0,
     "name": "HEPA - Hepion Pharmaceuticals, Inc.",
-    "change_from_open": 0.13,
-    "change_from_open_percent": 0.0458
+    "change_from_open": 0.025,
+    "change_from_open_percent": 0.0149
   },
   "NTLA": {
-    "price": 68.28,
-    "refresh_time": "2021-02-15 14:31:45",
-    "market_cap": 4411000000.0,
+    "price": 76.8,
+    "refresh_time": "2021-04-23 11:52:31",
+    "market_cap": 4855000000.0,
     "name": "NTLA - Intellia Therapeutics, Inc.",
-    "change_from_open": -0.64,
-    "change_from_open_percent": -0.009300000000000001
+    "change_from_open": 2.2,
+    "change_from_open_percent": 0.029500000000000002
   },
   "SBPH": {
     "price": null,
-    "refresh_time": "2021-02-15 14:31:46",
+    "refresh_time": "2021-04-23 11:52:32",
     "market_cap": null,
-    "name": "SBPH - Spring Bank Pharmaceuticals, Inc.",
+    "name": "Symbol Lookup from Yahoo FinanceHomeMailNewsFinanceSportsEntertainmentSearchMobileMore...Yahoo FinanceSearchSign inMailSign in to view your mailFinance HomeWatchlistsMy PortfolioScreenersYahoo Finance PlusMarketsNewsPersonal FinanceVideosIndustriesTechContact UsU.S. markets close in 4 hours 8 minutesS&P 5004,175.26+40.28(+0.97%)Dow 3033,980.23+164.33(+0.49%)Nasdaq14,007.35+188.94(+1.37%)Symbols similar to 'sbph'All (8)Stocks (8)Mutual Funds (0)ETFs (0)Indices (0)Futures (0)Currencies (0)SymbolNameLast PriceIndustry / CategoryTypeExchangeSPHSuburban Propane Partners, L.P.14.65UtilitiesStocksNYQSBHSally Beauty Holdings, Inc. (Na20.46Consumer CyclicalStocksNYQTBPHTheravance Biopharma, Inc.21.30HealthcareStocksNGMLBPHLongboard Pharmaceuticals, Inc.10.94HealthcareStocksNGMSCPHscPharmaceuticals Inc.6.83HealthcareStocksNMSSPPHSPENCER PHARMACEUTICAL INC0.00N/AStocksPNKKBPHKYTO TECHNOLOGY AND LIFE SCI IN1.90Financial ServicesStocksPNKSBPHSBPHN/AN/AStocksNCMAlready got your third stimulus check? A bonus amount may be on the wayMoneyWiseEconomist: Government will 'attempt' to make unearned and earned tax rate similarYahoo Finance VideoThe worst mistake you can make on a Zoom job interview: \u2018It\u2019s the first thing that occurs and it never goes well\u2019Yahoo FinanceAdvertise with us\u00a9 2021 Verizon Media. All rights reserved.Data DisclaimerHelpSuggestionsPrivacy DashboardPrivacy (Updated)About Our AdsTerms (Updated)Sitema",
     "change_from_open": null,
     "change_from_open_percent": null
   },
   "VIR": {
-    "price": 69.71,
-    "refresh_time": "2021-02-15 14:31:46",
-    "market_cap": 8880000000.0,
+    "price": 48.62,
+    "refresh_time": "2021-04-23 11:52:32",
+    "market_cap": 6070000000.0,
     "name": "VIR - Vir Biotechnology, Inc.",
-    "change_from_open": -2.26,
-    "change_from_open_percent": -0.031400000000000004
+    "change_from_open": -1.22,
+    "change_from_open_percent": -0.0245
   }
 }
